@@ -1,5 +1,5 @@
-import { Player } from "./player";
-import { Weapon } from "./weapon";
+import { Player } from "./player.js";
+import { Weapon } from "./weapon.js";
 export class Square{
   static GetPlayerLocation(name){
       //get the id of the td with the player inside

@@ -1,4 +1,4 @@
-import { Board } from "./board";
+import { Board } from "./board.js";
 export class App{
   constructor(boardSize){
     this.board = null; //board object

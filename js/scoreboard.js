@@ -1,4 +1,4 @@
-import { Player } from "./player";
+import { Player } from "./player.js";
 export class ScoreBoard{
   constructor(players){
     this.players = players;
