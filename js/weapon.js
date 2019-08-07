@@ -1,4 +1,4 @@
-class Weapon{
+export class Weapon{
   constructor(weapon, damage){
     this._weapon = weapon;
     this._damage = damage;

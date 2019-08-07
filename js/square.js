@@ -1,6 +1,6 @@
 import { Player } from "./player";
 import { Weapon } from "./weapon";
-class Square{
+export class Square{
   static GetPlayerLocation(name){
       //get the id of the td with the player inside
       let tdId =  $("#"+name).parent().attr('id');

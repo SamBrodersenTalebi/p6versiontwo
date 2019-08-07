@@ -1,4 +1,4 @@
-class Player{
+export class Player{
   constructor(name, boolean){
     this._name = name;
     this._active = boolean;
