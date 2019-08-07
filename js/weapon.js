@@ -6,7 +6,7 @@ export class Weapon{
   }
 
   createView(){
-    let elem = $('<div>').attr('class', 'weapon').text(this.weapon);
+    let elem = $('<div>').attr('class', 'weapon').text(this._weapon);
     return elem
   }
 

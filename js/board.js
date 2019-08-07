@@ -1,6 +1,7 @@
 import { Player } from "./player.js";
 import { Weapon } from "./weapon.js";
 import { ScoreBoard } from "./scoreboard.js";
+import { Square } from "./square.js";
 export class Board{
   constructor(size){
     this.size = size;

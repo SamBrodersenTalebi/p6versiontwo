@@ -32,7 +32,7 @@ export class Square{
 
     let td = $('#'+this.id);
     if(this._weapon === null){
-      $(td).children()[1].replaceWith('<div>');
+      $(td).children()[1].replaceWith($( "div" ));
     } else{
       $(td).children()[1].replaceWith(object.element);
     }
@@ -75,16 +75,7 @@ export class Square{
     return this._player;
   }
 
-/*
-  set player(object){
-    //Update Model
-    this._player = p;
 
-    //Update View
-    let td = $('#'+this.id);
-    $(td).children()[0].replaceWith(p.elem);
-  }
-*/
   setPlayer(p){
     //Update model
     this._player = p;
@@ -102,7 +93,7 @@ export class Square{
 
     //update View
     let td = $('#'+this.id);
-    $(td).children()[0].replaceWith('<div>');
+    $(td).children()[0].replaceWith($( "div" ));
     return p;
   }
 }
