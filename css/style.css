@@ -1,0 +1,57 @@
+#game{
+  display: flex;
+}
+
+#table{
+  flex: 0 0 80%;
+}
+
+#player-info{
+  flex:1;
+}
+
+table {
+    border-collapse: collapse;
+    margin: auto;
+}
+
+td {
+    border: 1px solid #999;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    vertical-align: center;
+}
+
+div{
+  margin: 10px 0;
+}
+h1{
+  color:green;
+  text-align: center;
+}
+
+#button{
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+#player-info{
+  border: 1px solid black;
+  padding: 0 5px;
+  width: 25%;
+  float: right;
+}
+
+#table{
+  width: 75%;
+  float: left;
+}
+
+.hi{
+  color:blue;
+}
+
+.blocked{
+  background-color: black;
+}
