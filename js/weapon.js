@@ -2,12 +2,12 @@ export class Weapon{
   constructor(weapon, damage){
     this._weapon = weapon;
     this._damage = damage;
-    this.elem = this.createView();
+    this.elem = this._createView();
   }
 
-  createView(){
+  _createView(){
     let elem = $('<div>').attr('class', 'weapon').text(this._weapon);
-    return elem
+    return elem;
   }
 
   get weapon(){

@@ -55,3 +55,7 @@ h1{
 .blocked{
   background-color: black;
 }
+
+.player{
+  color:green;
+}

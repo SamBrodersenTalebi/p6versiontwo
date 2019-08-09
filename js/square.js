@@ -24,21 +24,6 @@ export class Square{
   // GETTER AND SETTER
   // ------------------------------------------------------------------------
 
-  get weapon(){
-    return this._weapon;
-  }
-
-  set weapon(weapon){
-    this._weapon = weapon;
-
-    let td = $('#'+this.id, this._board_elem); //the second argument tells it to search inside of the context of the table element
-    if(this._weapon === null){
-      $(td).children()[1].replaceWith("<div>");
-    } else{
-      $(td).children()[1].replaceWith(weapon.elem);
-    }
-  }
-
   // Getter is called when trying to read a property
   get blocked(){
     return this._blocked;
@@ -56,6 +41,24 @@ export class Square{
       $(td).removeClass('blocked');
     }
   }
+
+  get weapon(){
+    return this._weapon;
+  }
+
+  set weapon(object){
+    //update model
+    this._weapon = object;
+
+    let td = $('#'+this.id, this._board_elem);
+    let child2 = $(td).children()[1];  // returns an HTML elem //the second argument tells it to search inside of the context of the table element
+    if(this._weapon === null){
+      $(child2).replaceWith("<div>")
+    } else{
+      $(child2).replaceWith(object.elem);  // calls jQuery’s replaceWith() method
+    }
+  }
+
 
   get highlight(){
     return this._highlight;
@@ -92,8 +95,9 @@ export class Square{
     this._player = p;
 
     //Update view
-    let td = $('#'+this.id);
-    $(td).children()[0].replaceWith(p.elem);
+    let td = $('#'+this.id, this._board_elem);
+    let child1 = $(td).children()[0]
+    $(child1).replaceWith(p.elem);
 
   }
 
@@ -104,7 +108,8 @@ export class Square{
 
     //update View
     let td = $('#'+this.id);
-    $(td).children()[0].replaceWith("<div>");
+    let child1 = $(td).children()[0]
+    $(child1).replaceWith(p.elem);
     return p;
   }
 }

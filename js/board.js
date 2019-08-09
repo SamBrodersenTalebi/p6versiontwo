@@ -11,7 +11,7 @@ export class Board{
     //this.scoreBoard = new ScoreInfo(this.players);
     this.blockedsquares();
     this.weaponsquares();
-    //this.addPlayer();
+    this.addPlayer();
     //console.table(this.model)
   }
 
