@@ -5,11 +5,14 @@ import { Square } from "./square.js";
 export class Board{
   constructor(size){
     this.size = size;
+    this.elem = this._createView(); //html elem
     this.model = this._createModel(); //array that contains all square instances for all cells
     this.players = this._createPlayers(); // two player objects contained in array
     //this.scoreBoard = new ScoreInfo(this.players);
-    this.elem = this._createView(); //html elem
     this.blockedsquares();
+    this.weaponsquares();
+    //this.addPlayer();
+    //console.table(this.model)
   }
 
   // ------------------------------------------------------------------------
@@ -31,7 +34,7 @@ export class Board{
       let trElem = $('<tr>')
 
       for (let column = 0; column < this.size; column++){
-        let id = `${row},${column}`;
+        let id = `${row}_${column}`;
         //append <td> to <tr> and add id to each cell
         let tdElem = $('<td>').attr('id',id).appendTo(trElem);
         for (let i = 0; i < 2; i++){
@@ -50,8 +53,8 @@ export class Board{
       model.push([]) // will push a [] for each row
 
       for(let column = 0; column < this.size; column++){
-        let id = `${row},${column}`;
-        model[row].push(new Square(id)); // push a new square for each column to the current row
+        let id = `${row}_${column}`;
+        model[row].push(new Square(id, this.elem)); // push a new square for each column to the current row
       }
     }
     return model;
@@ -115,5 +118,17 @@ export class Board{
       }
     }
   }
+
+  addPlayer(){
+    let i = 0
+    while(i <= 1){
+      let randomsquare = this.getRandomSquare();
+      if(randomsquare.blocked == false && randomsquare.weapon == null && randomsquare.player == null){
+        randomsquare.setPlayer(this.players[i]);
+        i++;
+      }
+    }
+  }
+
 
 }

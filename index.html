@@ -42,9 +42,13 @@
     </div>
 
       <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+      <script>
+        let app = null;  // global scope
+      </script>
       <script type="module">
         import { App } from "./js/app.js";
         $('#playGame').click(function(){
+          app = new App(10) // assign it to global variable
           $('#playGame').hide();
         })
 

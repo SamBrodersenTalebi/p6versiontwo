@@ -11,7 +11,8 @@ export class Square{
       return { row: r, column: c};
   }
 
-  constructor(id){
+  constructor(id, _board_elem){
+    this._board_elem = _board_elem;
     this.id = id;
     this._blocked = false;
     this._player = null;
@@ -27,14 +28,14 @@ export class Square{
     return this._weapon;
   }
 
-  set weapon(object){
-    this._weapon = object;
+  set weapon(weapon){
+    this._weapon = weapon;
 
-    let td = $('#'+this.id);
+    let td = $('#'+this.id, this._board_elem); //the second argument tells it to search inside of the context of the table element
     if(this._weapon === null){
-      $(td).children()[1].replaceWith($( "div" ));
+      $(td).children()[1].replaceWith("<div>");
     } else{
-      $(td).children()[1].replaceWith(object.element);
+      $(td).children()[1].replaceWith(weapon.elem);
     }
   }
 
@@ -48,7 +49,7 @@ export class Square{
     //Update model
     this._blocked = boolean;
     //Update view
-    let td = $('#'+this.id);
+    let td = $('#'+this.id, this._board_elem);
     if(boolean){
       $(td).addClass('blocked');
     } else{
@@ -75,6 +76,16 @@ export class Square{
     return this._player;
   }
 
+  /*set player(player){
+    //Update model
+    this._player = player;
+
+    //Update view
+    let td = $('#'+this.id, this._board_elem);
+
+  }
+  */
+
 
   setPlayer(p){
     //Update model
@@ -93,7 +104,7 @@ export class Square{
 
     //update View
     let td = $('#'+this.id);
-    $(td).children()[0].replaceWith($( "div" ));
+    $(td).children()[0].replaceWith("<div>");
     return p;
   }
 }
