@@ -12,6 +12,8 @@ export class Board{
     this.blockedsquares();
     this.weaponsquares();
     this.addPlayer();
+    this.movePlayer();
+    //$('#table').on('click', movePlayer());
     //console.table(this.model)
   }
 
@@ -64,7 +66,6 @@ export class Board{
   // Squares
   // ------------------------------------------------------------------------
   getSquareWithPlayer(active){
-    //DELETE NAME ARGUMENT!
     let player = this.players[0];
     if(player.active !== active){
       player = this.players[1];
@@ -128,6 +129,114 @@ export class Board{
         i++;
       }
     }
+  }
+
+  // ------------------------------------------------------------------------
+  // EVENT PART TWO
+  // ------------------------------------------------------------------------
+  movePlayer(){
+    //Find location of the active player
+    let location = this.getSquareWithPlayer(true);
+    //store the squares that a player can move into in an array.
+    let validSquares = this.findValidSquares(location);
+    //add class to the validSquares
+    this.highlight(validSquares, true);
+    //Listen for click event on the highlighted squares
+    $('.highlight').click(function(e){
+      let elem = e.target;
+      //access id of elem
+      let id = elem.id;
+      //get the row and column number
+      let row = Number( id[0]);
+      let column = Number( id[2] );
+      //pass row and column to move function
+      this.move(row,column);
+      //remove class highlight to the validsquares
+      this.highlight(validSquares, false);
+      //switch active player when the turn is done
+      this.switchPlayer()
+      // UPDATE SCOREBOARD!
+      this.scoreBoard.swictchActivePlayer();
+      this.scoreBoard.updatePlayerLifePoints();
+      this.scoreBoard.updatePlayerWeapon();
+    })
+    this.movePlayer();
+  }
+
+  findValidSquares(location){
+    let validSquares = [];
+    let row = location.row;
+    let column = location.column;
+    //Check Left moves
+    for(i = -1; i >= -3; i--){
+      let newRow = row + i;
+      if (newRow < 0){
+        break;
+      }
+      let square = this.getSquare(newRow, column)
+      if(square.blocked == true || square.player !== null ){
+        break;
+      }
+      else{
+        validSquares.push(square);
+      }
+    }
+    //Check right moves
+    for(i = 1; i <= 3; i++){
+      let newRow = row + i;
+      if (newRow > this.size - 1){
+        break;
+      }
+      let square = this.getSquare(newRow, column)
+      if(square.blocked == true || square.player !== null ){
+        break;
+      }
+      else{
+        validSquares.push(square);
+      }
+    }
+    //Check down moves
+    for(j = 1; j <= 3; j++){
+      let newColumn = column + j;
+      if (newColumn > this.size - 1){
+        break;
+      }
+      let square = this.getSquare(row, newColumn)
+      if(square.blocked == true || square.player !== null ){
+        break;
+      }
+      else{
+        validSquares.push(square);
+      }
+    }
+    //Check up moves
+    for(j = -1; j >= -3; j--){
+      let newColumn = column + j;
+      if (newColumn < 0){
+        break;
+      }
+      let square = this.getSquare(row, newColumn)
+      if(square.blocked == true || square.player !== null ){
+        break;
+      }
+      else{
+        validSquares.push(square);
+      }
+    }
+    return validSquares
+  }
+
+  highlight(array, boolean){
+    //add class highlight to objects within validSquares array
+    for(i = 0; i < array.length; i++){
+      array[i].highlight = boolean;
+    }
+  }
+
+  switchPlayer(){
+    // switches the active player
+    players[0].active = ! players[0].active;
+    players[1].active = ! players[1].active;
   }
 
 

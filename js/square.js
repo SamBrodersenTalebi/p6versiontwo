@@ -5,10 +5,10 @@ export class Square{
       //get the id of the td with the player inside
       let tdId =  $("#"+name).parent().attr('id');
       //use number method to turn string into number
-      let r = Number( tdId[0]);
-      let c = Number( tdId[2] );
+      let r = Number(tdId[0]);
+      let c = Number(tdId[2]);
       //return the row and column
-      return { row: r, column: c};
+      return { row: r, column: c };
   }
 
   constructor(id, _board_elem){
