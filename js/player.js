@@ -19,6 +19,10 @@ export class Player{
     return this._name;
   }
 
+  set name(string){
+    this._name = string;
+  }
+
   get active(){
     return this._active
   }

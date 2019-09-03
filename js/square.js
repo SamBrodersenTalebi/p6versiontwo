@@ -1,9 +1,11 @@
 import { Player } from "./player.js";
 import { Weapon } from "./weapon.js";
+import { TheBoard } from "./board.js";
+
 export class Square{
   static GetPlayerLocation(name){
       //get the id of the td with the player inside
-      let tdId =  $("#"+name).parent().attr('id');
+      let tdId =  $("#"+name, TheBoard.elem).parent().attr('id');
       //use number method to turn string into number
       let r = Number(tdId[0]);
       let c = Number(tdId[2]);
@@ -11,8 +13,7 @@ export class Square{
       return { row: r, column: c };
   }
 
-  constructor(id, _board_elem){
-    this._board_elem = _board_elem;
+  constructor(id){
     this.id = id;
     this._blocked = false;
     this._player = null;
@@ -34,7 +35,7 @@ export class Square{
     //Update model
     this._blocked = boolean;
     //Update view
-    let td = $('#'+this.id, this._board_elem);
+    let td = $('#'+this.id, TheBoard.elem);
     if(boolean){
       $(td).addClass('blocked');
     } else{
@@ -50,7 +51,7 @@ export class Square{
     //update model
     this._weapon = object;
 
-    let td = $('#'+this.id, this._board_elem);
+    let td = $('#'+this.id, TheBoard.elem);
     let child2 = $(td).children()[1];  // returns an HTML elem //the second argument tells it to search inside of the context of the table element
     if(this._weapon === null){
       $(child2).replaceWith("<div>")
@@ -95,7 +96,7 @@ export class Square{
     this._player = p;
 
     //Update view
-    let td = $('#'+this.id, this._board_elem);
+    let td = $('#'+this.id, TheBoard.elem);
     let child1 = $(td).children()[0]
     $(child1).replaceWith(p.elem);
 

@@ -2,12 +2,16 @@ import { Player } from "./player.js";
 import { Weapon } from "./weapon.js";
 import { ScoreBoard } from "./scoreboard.js";
 import { Square } from "./square.js";
+
+export var TheBoard = null;
+
 export class Board{
   constructor(size){
     this.size = size;
     this.elem = this._createView(); //html elem
     this.model = this._createModel(); //array that contains all square instances for all cells
     this.players = this._createPlayers(); // two player objects contained in array
+    TheBoard = this;
     //this.scoreBoard = new ScoreInfo(this.players);
     this.blockedsquares();
     this.weaponsquares();
@@ -15,6 +19,7 @@ export class Board{
     this.movePlayer();
     //$('#table').on('click', movePlayer());
     //console.table(this.model)
+    //console.log(this.model)
   }
 
   // ------------------------------------------------------------------------
@@ -56,7 +61,7 @@ export class Board{
 
       for(let column = 0; column < this.size; column++){
         let id = `${row}_${column}`;
-        model[row].push(new Square(id, this.elem)); // push a new square for each column to the current row
+        model[row].push(new Square(id)); // push a new square for each column to the current row
       }
     }
     return model;
@@ -135,40 +140,45 @@ export class Board{
   // EVENT PART TWO
   // ------------------------------------------------------------------------
   movePlayer(){
-    //Find location of the active player
+    //get square with active player
     let location = this.getSquareWithPlayer(true);
     //store the squares that a player can move into in an array.
     let validSquares = this.findValidSquares(location);
     //add class to the validSquares
-    this.highlight(validSquares, true);
+    this.highlight(validSquares, true, this.clickHandler());
     //Listen for click event on the highlighted squares
-    $('.highlight').click(function(e){
-      let elem = e.target;
+
+    //this.move(row,column);
+    //remove class highlight to the validsquares
+    this.highlight(validSquares, false);
+    // UPDATE SCOREBOARD!
+    this.scoreBoard.swictchActivePlayer();
+    this.scoreBoard.updatePlayerLifePoints();
+    this.scoreBoard.updatePlayerWeapon
+    //switch active player when the turn is done
+    this.switchPlayer()
+
+  }
+
+  clickHandler(event){
+    $('.highlight').click(function(event){
+      let elem = event.target;
       //access id of elem
       let id = elem.id;
       //get the row and column number
       let row = Number( id[0]);
       let column = Number( id[2] );
-      //pass row and column to move function
-      this.move(row,column);
-      //remove class highlight to the validsquares
-      this.highlight(validSquares, false);
-      //switch active player when the turn is done
-      this.switchPlayer()
-      // UPDATE SCOREBOARD!
-      this.scoreBoard.swictchActivePlayer();
-      this.scoreBoard.updatePlayerLifePoints();
-      this.scoreBoard.updatePlayerWeapon();
-    })
-    this.movePlayer();
+      console.log(`${row},${column}`);
+    });
   }
 
   findValidSquares(location){
     let validSquares = [];
+    // POTENTIAL BUG SAY location.id[0] to row and location.id[2];
     let row = location.row;
     let column = location.column;
     //Check Left moves
-    for(i = -1; i >= -3; i--){
+    for(let i = -1; i >= -3; i--){
       let newRow = row + i;
       if (newRow < 0){
         break;
@@ -182,7 +192,7 @@ export class Board{
       }
     }
     //Check right moves
-    for(i = 1; i <= 3; i++){
+    for(let i = 1; i <= 3; i++){
       let newRow = row + i;
       if (newRow > this.size - 1){
         break;
@@ -196,7 +206,7 @@ export class Board{
       }
     }
     //Check down moves
-    for(j = 1; j <= 3; j++){
+    for(let j = 1; j <= 3; j++){
       let newColumn = column + j;
       if (newColumn > this.size - 1){
         break;
@@ -210,7 +220,7 @@ export class Board{
       }
     }
     //Check up moves
-    for(j = -1; j >= -3; j--){
+    for(let j = -1; j >= -3; j--){
       let newColumn = column + j;
       if (newColumn < 0){
         break;
@@ -237,6 +247,7 @@ export class Board{
     // switches the active player
     players[0].active = ! players[0].active;
     players[1].active = ! players[1].active;
+    this.movePlayer();
   }
 
 
