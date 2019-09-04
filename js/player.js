@@ -1,4 +1,6 @@
 import { Weapon } from "./weapon.js";
+import { TheBoard } from "./board.js";
+
 export class Player{
   constructor(name, boolean){
     this._name = name;
@@ -15,6 +17,14 @@ export class Player{
     return elem
   }
 
+  fight(handler){
+    $('#attackButton, #defendButton', TheBoard.elem).click(handler)
+  }
+
+  peace(){
+    $('#attackButton, #defendButton', TheBoard.elem).off();
+  }
+
   get name(){
     return this._name;
   }
@@ -29,6 +39,10 @@ export class Player{
 
   set active(boolean){
     this._active = boolean;
+  }
+
+  get weapon(){
+    return this._weapon;
   }
 
   set weapon(string){

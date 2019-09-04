@@ -16,7 +16,7 @@ export class Board{
     this.blockedsquares();
     this.weaponsquares();
     this.addPlayer();
-    this.movePlayer();
+    this.initMove();
     //$('#table').on('click', movePlayer());
     //console.table(this.model)
     //console.log(this.model)
@@ -70,6 +70,16 @@ export class Board{
   // ------------------------------------------------------------------------
   // Squares
   // ------------------------------------------------------------------------
+  getActivePlayer(boolean){
+    let player;
+    if(this.player[0].active === boolean){
+      player = this.player[0];
+    } else{
+      player = this.player[1];
+    }
+    return player;
+  }
+
   getSquareWithPlayer(active){
     let player = this.players[0];
     if(player.active !== active){
@@ -89,7 +99,7 @@ export class Board{
 
   //gets a specific square
   getSquare(row, column){
-    return this.model[row][column]
+    return this.model[row][column];
   }
 
   // ------------------------------------------------------------------------
@@ -139,44 +149,30 @@ export class Board{
   // ------------------------------------------------------------------------
   // EVENT PART TWO
   // ------------------------------------------------------------------------
-  movePlayer(){
+  initMove(){
     //get square with active player
-    let location = this.getSquareWithPlayer(true);
+    let playerSquare = this.getSquareWithPlayer(true);
     //store the squares that a player can move into in an array.
-    let validSquares = this.findValidSquares(location);
-    //add class to the validSquares
-    this.highlight(validSquares, true, this.clickHandler());
-    //Listen for click event on the highlighted squares
-
-    //this.move(row,column);
-    //remove class highlight to the validsquares
-    this.highlight(validSquares, false);
+    let validSquares = this.findValidSquares(playerSquare);
+    //tells the highlight method what handler to call when there is a click
+    // bind() creates a new function that will have this set to the first parameter
+    this.highlight(validSquares, Board.prototype.clickHandler.bind(this));
     // UPDATE SCOREBOARD!
+    /*
     this.scoreBoard.swictchActivePlayer();
     this.scoreBoard.updatePlayerLifePoints();
     this.scoreBoard.updatePlayerWeapon
+    */
     //switch active player when the turn is done
-    this.switchPlayer()
+    this.switchPlayer(true);
 
   }
 
-  clickHandler(event){
-    $('.highlight').click(function(event){
-      let elem = event.target;
-      //access id of elem
-      let id = elem.id;
-      //get the row and column number
-      let row = Number( id[0]);
-      let column = Number( id[2] );
-      console.log(`${row},${column}`);
-    });
-  }
 
-  findValidSquares(location){
+  findValidSquares(playerSquare){
     let validSquares = [];
-    // POTENTIAL BUG SAY location.id[0] to row and location.id[2];
-    let row = location.row;
-    let column = location.column;
+    let row = Number(playerSquare.id[0]);
+    let column = Number(playerSquare.id[2]);
     //Check Left moves
     for(let i = -1; i >= -3; i--){
       let newRow = row + i;
@@ -236,19 +232,146 @@ export class Board{
     return validSquares
   }
 
-  highlight(array, boolean){
+  highlight(array, handler){
     //add class highlight to objects within validSquares array
-    for(i = 0; i < array.length; i++){
-      array[i].highlight = boolean;
+    for(let i = 0; i < array.length; i++){
+      array[i].highlight(handler);
     }
   }
 
-  switchPlayer(){
-    // switches the active player
-    players[0].active = ! players[0].active;
-    players[1].active = ! players[1].active;
-    this.movePlayer();
+  clickHandler(event){
+    let elem = event.target;
+    let id = elem.id;
+    let row = Number(id[0]);
+    let column = Number(id[2]);
+    this.move(row,column);
   }
 
+  unhighlight(array){
+    for(let i = 0; i < array.length; i++){
+      array[i].unhighlight();
+    }
+  }
+
+  switchPlayer(boolean){
+    // switches the active player
+    this.players[0].active = ! this.players[0].active;
+    this.players[1].active = ! this.players[1].active;
+    if(boolean){
+      this.initMove();
+    }else{
+      this.initFight();
+    }
+  }
+
+  move(row,column){
+    //get square with player
+    let playerSquare = this.getSquareWithPlayer(true);
+    //remove player from current square
+    let player = playerSquare.removePlayer();
+    // get the new square
+    let square = this.getSquare(row,column);
+    // insert player to the new square
+    square.setPlayer(player);
+    //If a player passes through a weapon it needs to update the weapon of the player
+    if(square.weapon !== null){
+      //square.weapon accesses the weapon object
+      let weaponObject = square.weapon;
+      //get the players weapon
+      let playerWeapon = player.weapon;
+      //updates the players weapon by calling the setter
+      player.weapon = weaponObject;
+      //replace players weapon with weapon in square
+      square.weapon = playerWeapon;
+    }
+    // ------------------------------------------------------------------------
+    // FIGHT PART THREE
+    // ------------------------------------------------------------------------
+    let fight = false;
+    let adjacentSquares = [];
+    let rowRight = row+1;
+    let rowLeft = row-1;
+    let columnDown = column+1;
+    let columnUp = column -1;
+    if(rowRight > !this.size -1){
+      if(this.getSquare(rowRight, column).blocked === false){
+        adjacentSquares.push(this.getSquare(rowRight, column));
+      }
+    }
+    if(rowLeft >= 0){
+      if(this.getSquare(rowLeft, column).blocked === false){
+        adjacentSquares.push(this.getSquare(rowLeft, column));
+      }
+    }
+
+    if(columnDown > !this.size -1){
+      if(this.getSquare(row, columnDown).blocked === false){
+        adjacentSquares.push(this.getSquare(row, columnDown));
+      }
+    }
+
+    if(columnUp >= 0){
+      if(this.getSquare(row, columnUp).blocked === false){
+        adjacentSquares.push(this.getSquare(row, columnUp));
+      }
+    }
+    //Loop over the adjacentSquares to see if there is a player;
+    for(let i=0; i < adjacentSquares.length; i++){
+      if(adjacentSquares[i].player !== null){
+        fight = true;
+        break;
+      }
+    }
+    if(fight){
+      this.initFight();
+    }
+
+    //PROBLEM DO NOT KNOW THE VALIDSQUARES!
+    //this.unhighlight(validSquares);
+  }
+
+  initFight(){
+    //save the activeplayer
+    let activePlayer = this.getActivePlayer(true);
+
+    //Add handler to defend and attack buttons
+    this.fightEvent(activePlayer, Board.prototype.fightHandler.bind(this));
+    //switchPlayer
+    this.switchPlayer(false);
+  }
+
+  fightEvent(activePlayer, handler){
+    activePlayer.fight(handler);
+  }
+
+  fightHandler(event){
+    let id = event.target.id;
+    this.fight(id);
+  }
+
+
+  fight(id){
+    //save the activeplayer
+    let activePlayer = this.getActivePlayer(true);
+    //save inactivePlayer
+    let inactivePlayer = this.getActivePlayer(false);
+    if(id == 'attackButton'){
+      let damage = activePlayer.weapon.damage;
+      if(inactivePlayer.defend == true){
+        damage / 2;
+      }
+      inactivePlayer.life -= damage;
+      activePlayer.defend = false;
+    }
+    if(id == 'defendButton'){
+      activePlayer.defend = true;
+    }
+    //turn off handler;
+    this.peace(activePlayer);
+  }
+
+  peace(activePlayer){
+    activePlayer.peace();
+  }
 
 }

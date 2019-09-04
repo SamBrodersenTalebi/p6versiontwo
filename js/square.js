@@ -18,7 +18,7 @@ export class Square{
     this._blocked = false;
     this._player = null;
     this._weapon = null;
-    this._highlight = false;
+    //this._highlight = false;
   }
 
   // ------------------------------------------------------------------------
@@ -56,24 +56,22 @@ export class Square{
     if(this._weapon === null){
       $(child2).replaceWith("<div>")
     } else{
+      //OBJECT IS UNDEFINED!
       $(child2).replaceWith(object.elem);  // calls jQuery’s replaceWith() method
     }
   }
 
 
-  get highlight(){
-    return this._highlight;
+  unhighlight(){
+    //this._highlight = boolean;
+    //remove clickhandler and class highlight
+    $('#'+this.id, TheBoard.elem).removeClass('highlight').off();
   }
 
-  set highlight(boolean){
-    this._highlight = boolean;
-
-    let td = array[i].id;
-    if(boolean){
-      $('#'+td).addClass('highlight');
-    }else{
-      $('#'+td).removeClass('highlight');
-    }
+  highlight(handler){
+    //this._highlight = boolean;
+    let elem = $('#'+this.id, TheBoard.elem);
+    elem.addClass('highlight').click(handler);
   }
 
   get player(){
