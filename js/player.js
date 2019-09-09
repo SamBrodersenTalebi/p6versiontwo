@@ -17,6 +17,7 @@ export class Player{
     return elem
   }
 
+/*
   fight(handler){
     $('#attackButton, #defendButton', TheBoard.elem).click(handler)
   }
@@ -24,7 +25,7 @@ export class Player{
   peace(){
     $('#attackButton, #defendButton', TheBoard.elem).off();
   }
-
+*/
   get name(){
     return this._name;
   }

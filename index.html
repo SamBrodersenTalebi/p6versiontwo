@@ -35,20 +35,18 @@
           Player 2 life: <span></span><br>
         </div>
         <div class="buttons">
-          <button type="button" name="button" id="attackButton">Attack</button>
-          <button type="button" name="button" id="defendButton">Defend</button>
+          <button type="button" name="button" class= "button" value = 0>Attack</button>
+          <button type="button" name="button" class= "button" value = 1>Defend</button>
         </div>
       </div>
     </div>
 
       <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-      <script>
-        let app = null;  // global scope
-      </script>
       <script type="module">
         import { App } from "./js/app.js";
+        let app;
         $('#playGame').click(function(){
-          app = new App(10) // assign it to global variable
+          app = new App(10);
           $('#playGame').hide();
         })
 

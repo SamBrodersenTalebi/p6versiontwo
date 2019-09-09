@@ -12,11 +12,12 @@ export class Board{
     this.model = this._createModel(); //array that contains all square instances for all cells
     this.players = this._createPlayers(); // two player objects contained in array
     TheBoard = this;
+    this.validSquares = [];
     //this.scoreBoard = new ScoreInfo(this.players);
     this.blockedsquares();
     this.weaponsquares();
     this.addPlayer();
-    this.initMove();
+    this.toggleActivePlayer();
     //$('#table').on('click', movePlayer());
     //console.table(this.model)
     //console.log(this.model)
@@ -27,8 +28,8 @@ export class Board{
   // ------------------------------------------------------------------------
 
   _createPlayers(){
-    let p1 = new Player('Sam', true);
-    let p2 = new Player('Jeff', false);
+    let p1 = new Player('Sam', false);
+    let p2 = new Player('Jeff', true);
     let players = [p1,p2]
     return players;
   }
@@ -149,23 +150,44 @@ export class Board{
   // ------------------------------------------------------------------------
   // EVENT PART TWO
   // ------------------------------------------------------------------------
-  initMove(){
+  toggleActivePlayer(){
+    //reset validsquares stored in this.validSquares
+    this.unhighlight(this.validSquares);
+    //change “active” prop of players
+    this.players[0].active = ! this.players[0].active;
+    this.players[1].active = ! this.players[1].active;
+
+    //find validSquares and set them
     //get square with active player
     let playerSquare = this.getSquareWithPlayer(true);
     //store the squares that a player can move into in an array.
-    let validSquares = this.findValidSquares(playerSquare);
+    this.validSquares = this.findValidSquares(playerSquare);
     //tells the highlight method what handler to call when there is a click
     // bind() creates a new function that will have this set to the first parameter
-    this.highlight(validSquares, Board.prototype.clickHandler.bind(this));
-    // UPDATE SCOREBOARD!
-    /*
-    this.scoreBoard.swictchActivePlayer();
-    this.scoreBoard.updatePlayerLifePoints();
-    this.scoreBoard.updatePlayerWeapon
-    */
-    //switch active player when the turn is done
-    this.switchPlayer(true);
+    this.highlight(this.validSquares, Board.prototype.clickHandler.bind(this));
+  }
 
+  highlight(array, handler){
+    //add class highlight to objects within validSquares array
+    for(let i = 0; i < array.length; i++){
+      array[i].highlight(handler);
+    }
+  }
+
+  unhighlight(validSquares){
+    for(let i = 0; i < validSquares.length; i++){
+      validSquares[i].unhighlight();
+    }
+
+  }
+
+  clickHandler(event){
+    let elem = event.target;
+    let id = elem.id;
+    let row = Number(id[0]);
+    let column = Number(id[2]);
+    this.movePlayer(row,column);
+    this.toggleActivePlayer();
   }
 
 
@@ -232,39 +254,7 @@ export class Board{
     return validSquares
   }
 
-  highlight(array, handler){
-    //add class highlight to objects within validSquares array
-    for(let i = 0; i < array.length; i++){
-      array[i].highlight(handler);
-    }
-  }
-
-  clickHandler(event){
-    let elem = event.target;
-    let id = elem.id;
-    let row = Number(id[0]);
-    let column = Number(id[2]);
-    this.move(row,column);
-  }
-
-  unhighlight(array){
-    for(let i = 0; i < array.length; i++){
-      array[i].unhighlight();
-    }
-  }
-
-  switchPlayer(boolean){
-    // switches the active player
-    this.players[0].active = ! this.players[0].active;
-    this.players[1].active = ! this.players[1].active;
-    if(boolean){
-      this.initMove();
-    }else{
-      this.initFight();
-    }
-  }
-
-  move(row,column){
+  movePlayer(row,column){
     //get square with player
     let playerSquare = this.getSquareWithPlayer(true);
     //remove player from current square
@@ -325,53 +315,62 @@ export class Board{
     if(fight){
       this.initFight();
     }
+    console.log(fight)
 
-    //PROBLEM DO NOT KNOW THE VALIDSQUARES!
-    //this.unhighlight(validSquares);
   }
 
   initFight(){
-    //save the activeplayer
-    let activePlayer = this.getActivePlayer(true);
+    //change “active” prop of players
+    this.players[0].active = ! this.players[0].active;
+    this.players[1].active = ! this.players[1].active;
 
-    //Add handler to defend and attack buttons
-    this.fightEvent(activePlayer, Board.prototype.fightHandler.bind(this));
-    //switchPlayer
-    this.switchPlayer(false);
-  }
 
-  fightEvent(activePlayer, handler){
-    activePlayer.fight(handler);
-  }
+    //WHAT SHOULD I PASS THE HANDLER TO??? I need to pass them to the buttons right?? Like THIS:
 
-  fightHandler(event){
-    let id = event.target.id;
-    this.fight(id);
+    $('.buttons').click(Board.prototype.fightClickHandler.bind(this))
+
+    //BTW I have given the buttons a class of button :-)
+
+
+    //UPDATE SCOREBOARD !
   }
 
 
-  fight(id){
+  fightClickHandler(event){
+    let value = event.target.value;
+    if(value === 0){
+      this.fight();
+    }
+    if(value === 1){
+      this.defend();
+    }
+    this.initFight()
+  }
+
+  fight(){
     //save the activeplayer
     let activePlayer = this.getActivePlayer(true);
     //save inactivePlayer
     let inactivePlayer = this.getActivePlayer(false);
-    if(id == 'attackButton'){
-      let damage = activePlayer.weapon.damage;
-      if(inactivePlayer.defend == true){
+
+    //save damage that activePlayer yield
+    let damage = activePlayer.weapon.damage;
+    if(inactivePlayer.defend == true){
         damage / 2;
-      }
-      inactivePlayer.life -= damage;
-      activePlayer.defend = false;
     }
-    if(id == 'defendButton'){
-      activePlayer.defend = true;
-    }
-    //turn off handler;
-    this.peace(activePlayer);
+    //subtract damage from inactivePlayer's life
+    inactivePlayer.life -= damage;
+    //in case the inactivePlayer had defend set to true then set it to false now.
+    inactivePlayer.defend = false;
   }
 
-  peace(activePlayer){
-    activePlayer.peace();
+  defend(){
+    //save the activeplayer
+    let activePlayer = this.getActivePlayer(true);
+
+    //set defend to true
+    activePlayer.defend = true;
   }
+
 
 }
