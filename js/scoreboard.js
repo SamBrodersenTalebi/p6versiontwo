@@ -1,33 +1,32 @@
 import { Player } from "./player.js";
+
 export class ScoreBoard{
   constructor(players){
     this.players = players;
-    this.name();
-    this.swictchActivePlayer();
-    this.updatePlayerLifePoints();
-    this.updatePlayerWeapon();
+    this.updateScoreBoard(this.players);
   }
 
-  name(){
-    $('#name').children()[0].text(this.players[0].name);
-    $('#name').children()[1].text(this.players[1].name);
-  }
+  updateScoreBoard(players){
+    let elem = $('#name').children()[0];
+    $(elem).text(this.players[0].name);
+    let elem2 = $('#name').children()[2]
+    $(elem2).text(this.players[1].name);
 
-  switchActivePlayer(){
-    if(this.players[0].active === true){
-      $('#active').text(this.players[0].name)
+    if(players[0].active === true){
+      $('#active').text(players[0].name)
     } else{
-      $('#active').text(this.players[1].name)
+      $('#active').text(players[1].name)
     }
-  }
 
-  updatePlayerLifePoints(){
-    $('#life').children()[0].text(this.players[0].life);
-    $('#life').children()[1].text(this.players[1].life);
-  }
+    let life = $('#life').children()[0];
+    $(life).text(players[0].life);
+    let life2 = $('#life').children()[2];
+    $(life2).text(players[1].life);
 
-  updatePlayerWeapon(){
-    $('#weapon').children()[0].text(this.players[0].weapon.weapon);
-    $('#weapon').children()[1].text(this.players[1].weapon.weapon);
+
+    let weapon = $('#weapon').children()[0];
+    $(weapon).text(players[0].weapon.weapon);
+    let weapon2 = $('#weapon').children()[2]
+    $(weapon2).text(players[1].weapon.weapon);
   }
 }

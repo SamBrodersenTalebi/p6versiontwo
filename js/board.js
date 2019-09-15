@@ -13,12 +13,12 @@ export class Board{
     this.players = this._createPlayers(); // two player objects contained in array
     TheBoard = this;
     this.validSquares = [];
-    //this.scoreBoard = new ScoreInfo(this.players);
+    this.scoreBoard = new ScoreBoard(this.players);
     this.blockedsquares();
     this.weaponsquares();
     this.addPlayer();
+    this.mode = "navigate";
     this.toggleActivePlayer();
-    //$('#table').on('click', movePlayer());
     //console.table(this.model)
     //console.log(this.model)
   }
@@ -73,10 +73,10 @@ export class Board{
   // ------------------------------------------------------------------------
   getActivePlayer(boolean){
     let player;
-    if(this.player[0].active === boolean){
-      player = this.player[0];
+    if(this.players[0].active === boolean){
+      player = this.players[0];
     } else{
-      player = this.player[1];
+      player = this.players[1];
     }
     return player;
   }
@@ -100,6 +100,7 @@ export class Board{
 
   //gets a specific square
   getSquare(row, column){
+    console.log(`${row},${column}`);
     return this.model[row][column];
   }
 
@@ -151,20 +152,30 @@ export class Board{
   // EVENT PART TWO
   // ------------------------------------------------------------------------
   toggleActivePlayer(){
-    //reset validsquares stored in this.validSquares
-    this.unhighlight(this.validSquares);
+    if(this.validSquares.length > 0){
+      //reset validsquares stored in this.validSquares
+      this.unhighlight(this.validSquares);
+      this.validSquares = [];
+    }
+
     //change “active” prop of players
     this.players[0].active = ! this.players[0].active;
     this.players[1].active = ! this.players[1].active;
 
-    //find validSquares and set them
-    //get square with active player
-    let playerSquare = this.getSquareWithPlayer(true);
-    //store the squares that a player can move into in an array.
-    this.validSquares = this.findValidSquares(playerSquare);
-    //tells the highlight method what handler to call when there is a click
-    // bind() creates a new function that will have this set to the first parameter
-    this.highlight(this.validSquares, Board.prototype.clickHandler.bind(this));
+    if(this.mode == "navigate"){
+      //find validSquares and set them
+      //get square with active player
+      let playerSquare = this.getSquareWithPlayer(true);
+      //store the squares that a player can move into in an array.
+      this.validSquares = this.findValidSquares(playerSquare);
+      console.log(this.validSquares.length)
+      //tells the highlight method what handler to call when there is a click
+      // bind() creates a new function that will have this set to the first parameter
+      this.highlight(this.validSquares, Board.prototype.clickHandler.bind(this));
+    }
+
+    //UPDATE SCOREBOARD
+    this.scoreBoard.updateScoreBoard(this.players);
   }
 
   highlight(array, handler){
@@ -277,13 +288,21 @@ export class Board{
     // ------------------------------------------------------------------------
     // FIGHT PART THREE
     // ------------------------------------------------------------------------
+    let fight = this.playerInAdjacentSquare(row, column);
+    if(fight){
+      this.mode = "fight";
+      this.initFight();
+    }
+  }
+
+  playerInAdjacentSquare(row, column){
     let fight = false;
     let adjacentSquares = [];
-    let rowRight = row+1;
-    let rowLeft = row-1;
+    let rowRight = row + 1;
+    let rowLeft = row - 1;
     let columnDown = column+1;
     let columnUp = column -1;
-    if(rowRight > !this.size -1){
+    if(rowRight < this.size -1){
       if(this.getSquare(rowRight, column).blocked === false){
         adjacentSquares.push(this.getSquare(rowRight, column));
       }
@@ -294,7 +313,7 @@ export class Board{
       }
     }
 
-    if(columnDown > !this.size -1){
+    if(columnDown < this.size -1){
       if(this.getSquare(row, columnDown).blocked === false){
         adjacentSquares.push(this.getSquare(row, columnDown));
       }
@@ -312,39 +331,23 @@ export class Board{
         break;
       }
     }
-    if(fight){
-      this.initFight();
-    }
-    console.log(fight)
-
+    return fight;
   }
 
   initFight(){
-    //change “active” prop of players
-    this.players[0].active = ! this.players[0].active;
-    this.players[1].active = ! this.players[1].active;
-
-
-    //WHAT SHOULD I PASS THE HANDLER TO??? I need to pass them to the buttons right?? Like THIS:
-
-    $('.buttons').click(Board.prototype.fightClickHandler.bind(this))
-
-    //BTW I have given the buttons a class of button :-)
-
-
-    //UPDATE SCOREBOARD !
+    $('.button').click(Board.prototype.fightClickHandler.bind(this));
   }
 
 
   fightClickHandler(event){
-    let value = event.target.value;
-    if(value === 0){
+    let id = event.target.id;
+    if(id === "attack"){
       this.fight();
     }
-    if(value === 1){
+    else{
       this.defend();
     }
-    this.initFight()
+    this.toggleActivePlayer();
   }
 
   fight(){
@@ -356,12 +359,18 @@ export class Board{
     //save damage that activePlayer yield
     let damage = activePlayer.weapon.damage;
     if(inactivePlayer.defend == true){
-        damage / 2;
+        damage /= 2;
     }
+    console.log(damage);
     //subtract damage from inactivePlayer's life
     inactivePlayer.life -= damage;
     //in case the inactivePlayer had defend set to true then set it to false now.
     inactivePlayer.defend = false;
+
+    if(inactivePlayer.life <= 0){
+      this.gameOver(activePlayer)
+    }
+
   }
 
   defend(){
@@ -370,6 +379,11 @@ export class Board{
 
     //set defend to true
     activePlayer.defend = true;
+  }
+
+  gameOver(winner){
+    alert(`Congratulations ${winner.name} won!`);
+
   }
 
 
