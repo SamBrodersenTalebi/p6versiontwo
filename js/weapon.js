@@ -1,18 +1,24 @@
 export class Weapon{
-  constructor(weapon, damage){
-    this._weapon = weapon;
+  constructor(name, filename, damage){
+    this.name = name;
+    this._weapon = filename;
     this._damage = damage;
     this.elem = this._createView();
   }
 
   _createView(){
-    let elem = $('<div>').attr('class', 'weapon').text(this._weapon);
+    let elem = $('<div>').addClass("weapon");
+    $(elem).css("background-image", "url(images/" + this._weapon + ")");
     return elem;
   }
 
-  get weapon(){
-    return this._weapon;
+
+  /*
+  get name(){
+    return this.name;
   }
+  */
+
 
   get damage(){
     return this._damage;

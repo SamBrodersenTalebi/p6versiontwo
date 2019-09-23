@@ -25,9 +25,9 @@ export class ScoreBoard{
 
 
     let weapon = $('#weapon').children()[0];
-    $(weapon).text(players[0].weapon.weapon);
+    $(weapon).text(players[0].weapon.name);
     let weapon2 = $('#weapon').children()[2]
-    $(weapon2).text(players[1].weapon.weapon);
+    $(weapon2).text(players[1].weapon.name);
 
     let damage = $('#damage').children()[0];
     $(damage).text(players[0].weapon.damage);

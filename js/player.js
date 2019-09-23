@@ -6,7 +6,7 @@ export class Player{
     this._name = name;
     this._active = boolean;
     this._life = 100;
-    this._weapon = new Weapon('Stick', 10);
+    this._weapon = new Weapon("Dagger","dagger.png", 10);
     this._defend = false;
     this.elem = this.createView()
   }
@@ -17,15 +17,6 @@ export class Player{
     return elem
   }
 
-/*
-  fight(handler){
-    $('#attackButton, #defendButton', TheBoard.elem).click(handler)
-  }
-
-  peace(){
-    $('#attackButton, #defendButton', TheBoard.elem).off();
-  }
-*/
   get name(){
     return this._name;
   }

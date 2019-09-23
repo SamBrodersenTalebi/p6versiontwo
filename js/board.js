@@ -100,7 +100,7 @@ export class Board{
 
   //gets a specific square
   getSquare(row, column){
-    console.log(`${row},${column}`);
+    //console.log(`${row},${column}`);
     return this.model[row][column];
   }
 
@@ -124,7 +124,7 @@ export class Board{
 
   weaponsquares(){
     //Create weapon object and insert them into a randomsquare.
-    let weapons = [new Weapon('Axe', 30), new Weapon('Sword', 20), new Weapon('Knife', 20), new Weapon('Spear', 30)];
+    let weapons = [new Weapon("Axe","axe.jpg", 30), new Weapon("Sword", "sword.jpg", 20), new Weapon("Knife","knife.png", 20), new Weapon("Spear","spear.jpg", 30)];
 
     while(weapons.length > 0){
       //Grab one random cell
@@ -132,6 +132,7 @@ export class Board{
       // If the randomsquare has an instance property of weapon set to an empty string then run the code
       if(randomsquare.weapon == null && randomsquare.blocked == false){
         //calls setter
+        console.log(randomsquare.id);
         randomsquare.weapon = weapons.pop();
       }
     }
@@ -168,7 +169,6 @@ export class Board{
       let playerSquare = this.getSquareWithPlayer(true);
       //store the squares that a player can move into in an array.
       this.validSquares = this.findValidSquares(playerSquare);
-      console.log(this.validSquares.length)
       //tells the highlight method what handler to call when there is a click
       // bind() creates a new function that will have this set to the first parameter
       this.highlight(this.validSquares, Board.prototype.clickHandler.bind(this));
@@ -193,7 +193,8 @@ export class Board{
   }
 
   clickHandler(event){
-    let elem = event.target;
+    //will return the element where a handler was attached
+    let elem = event.delegateTarget;
     let id = elem.id;
     let row = Number(id[0]);
     let column = Number(id[2]);
@@ -361,7 +362,6 @@ export class Board{
     if(inactivePlayer.defend == true){
         damage /= 2;
     }
-    console.log(damage);
     //subtract damage from inactivePlayer's life
     inactivePlayer.life -= damage;
     //in case the inactivePlayer had defend set to true then set it to false now.

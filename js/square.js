@@ -56,7 +56,7 @@ export class Square{
     if(this._weapon === null){
       $(child2).replaceWith("<div>")
     } else{
-      //OBJECT IS UNDEFINED!
+      // set weapon
       $(child2).replaceWith(object.elem);  // calls jQuery’s replaceWith() method
     }
   }
@@ -78,16 +78,6 @@ export class Square{
     return this._player;
   }
 
-  /*set player(player){
-    //Update model
-    this._player = player;
-
-    //Update view
-    let td = $('#'+this.id, this._board_elem);
-
-  }
-  */
-
 
   setPlayer(p){
     //Update model
@@ -108,7 +98,7 @@ export class Square{
     //update View
     let td = $('#'+this.id);
     let child1 = $(td).children()[0]
-    $(child1).replaceWith(p.elem);
+    $(child1).replaceWith("<div>");
     return p;
   }
 }
